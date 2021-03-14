@@ -1,38 +1,503 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
-{% block title %} {{ page.title }} | {{ config.title }} {% endblock %}
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
-{% block page_class %}page-post-detail{% endblock %}
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangliquan.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="公司项目 娃娃 中播放小视频的播放器控件抽取出来，分享一下。WaWaVideoPlayer是一款轻量级视频播放器组件,利用原生MPMoviePlayerController参考kr-video-player编写的一款视频控件。解决项目中微视频播放问题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 轻量级播放器">
+<meta property="og:url" content="http://fangliquan.github.io/2016-07-24/wawa-mediaplayer/index.html">
+<meta property="og:site_name" content="microleo的个人博客">
+<meta property="og:description" content="公司项目 娃娃 中播放小视频的播放器控件抽取出来，分享一下。WaWaVideoPlayer是一款轻量级视频播放器组件,利用原生MPMoviePlayerController参考kr-video-player编写的一款视频控件。解决项目中微视频播放问题。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-07-24T15:30:11.000Z">
+<meta property="article:modified_time" content="2017-03-20T10:28:58.000Z">
+<meta property="article:author" content="microleo">
+<meta property="article:tag" content="iOS视频播放器">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://fangliquan.github.io/2016-07-24/wawa-mediaplayer/">
 
 
-{% block content %}
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+  <title>iOS 轻量级播放器 | microleo的个人博客</title>
+  
 
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="microleo的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
-{% endblock %}
+  <div class="site-meta">
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">microleo的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">工作学习中的学习笔记及技术积累</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
 
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">20</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-exclamation-circle fa-fw"></i>About</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://fangliquan.github.io/2016-07-24/wawa-mediaplayer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content="iOS,Windows开发者">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="microleo的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS 轻量级播放器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Post created:2016-07-24 23:30:11" itemprop="dateCreated datePublished" datetime="2016-07-24T23:30:11+08:00">2016-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Post modified:2017-03-20 18:28:58" itemprop="dateModified" datetime="2017-03-20T18:28:58+08:00">2017-03-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS-Project-Practice/" itemprop="url" rel="index"><span itemprop="name">iOS Project Practice</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>公司项目 <a target="_blank" rel="noopener" href="http://www.wawachina.cn/app">娃娃</a> 中播放小视频的播放器控件抽取出来，分享一下。<br>WaWaVideoPlayer是一款轻量级视频播放器组件,利用原生MPMoviePlayerController参考kr-video-player编写的一款视频控件。解决项目中微视频播放问题。</p>
+<span id="more"></span>
+<h2 id="WaWaVideoPlayer使用说明"><a href="#WaWaVideoPlayer使用说明" class="headerlink" title="WaWaVideoPlayer使用说明"></a>WaWaVideoPlayer使用说明</h2><h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 视频播放</span></span><br><span class="line">WawaVideoPlayViewController *vc= [[WawaVideoPlayViewController alloc] init];</span><br><span class="line">vc.videoURL =[<span class="built_in">NSURL</span> URLWithString:<span class="string">@&quot;http://2527.vod.myqcloud.com/2527_117134a2343111e5b8f5bdca6cb9f38c.f20.mp4&quot;</span>];</span><br><span class="line">vc.content = <span class="string">@&quot;http://2527.vod.myqcloud.com/2527_117134a2343111e5b8f5bdca6cb9f38c.f20.mp4&quot;</span>;</span><br><span class="line"><span class="built_in">UINavigationController</span> *rootVedioVc = [[<span class="built_in">UINavigationController</span> alloc]initWithRootViewController:vc];</span><br><span class="line">rootVedioVc.navigationBarHidden = <span class="literal">YES</span>;</span><br><span class="line">[<span class="keyword">self</span> presentViewController:rootVedioVc animated:<span class="literal">NO</span> completion:<span class="literal">nil</span>];</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载视频核心方法"><a href="#下载视频核心方法" class="headerlink" title="下载视频核心方法"></a>下载视频核心方法</h3><p>  播放器使用 <code>AFNetworking</code> 进行视频文件的下载，用<code>MBProgressHD</code>实现了下载进度</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">  -(<span class="keyword">void</span>)downloadVideo :(<span class="built_in">NSURL</span> *)video andMsgContent:(<span class="built_in">NSString</span> *)content isOnlyDown:(<span class="built_in">BOOL</span> )isOnlyDown&#123;</span><br><span class="line">    <span class="built_in">NSString</span> *videoPath = [<span class="keyword">self</span> getVideoSaveFolderPathString];<span class="comment">//文件名</span></span><br><span class="line">    <span class="built_in">NSString</span> *file = [videoPath stringByAppendingPathComponent:[content stringByReplacingOccurrencesOfString:<span class="string">@&quot;/&quot;</span> withString:<span class="string">@&quot;_&quot;</span>]];</span><br><span class="line">    <span class="keyword">if</span> (![file hasSuffix:<span class="string">@&quot;.mp4&quot;</span>]) &#123;</span><br><span class="line">        file = [file stringByAppendingString:<span class="string">@&quot;.mp4&quot;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">self</span>.currentVideoFile = file;</span><br><span class="line">    <span class="built_in">NSFileManager</span> *fileManager = [<span class="built_in">NSFileManager</span> defaultManager];</span><br><span class="line">    <span class="keyword">if</span>(![fileManager fileExistsAtPath:file]) &#123;</span><br><span class="line">        [<span class="keyword">self</span> createVideoFolderIfNotExist];<span class="comment">//创建文件file</span></span><br><span class="line">        <span class="comment">//初始化进度条</span></span><br><span class="line">        MBProgressHUD *HUD = [MBProgressHUD showMessag:<span class="literal">nil</span> toView:<span class="keyword">self</span>.view];</span><br><span class="line">        HUD.tag = <span class="number">1000</span>;</span><br><span class="line">        HUD.mode = MBProgressHUDModeAnnularDeterminate;</span><br><span class="line">        HUD.labelFont = [<span class="built_in">UIFont</span> systemFontOfSize:<span class="number">12</span>];</span><br><span class="line">        HUD.detailsLabelText = <span class="string">@&quot;正在下载...&quot;</span>;</span><br><span class="line">        HUD.detailsLabelFont = [<span class="built_in">UIFont</span> systemFontOfSize:<span class="number">14</span>];</span><br><span class="line">        HUD.square = <span class="literal">YES</span>;</span><br><span class="line">        <span class="comment">//初始化队列</span></span><br><span class="line">        <span class="built_in">NSOperationQueue</span> *queue = [[<span class="built_in">NSOperationQueue</span> alloc ]init];</span><br><span class="line">        __<span class="keyword">weak</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>)weakSelf = <span class="keyword">self</span>;</span><br><span class="line">        <span class="comment">//保存路径</span></span><br><span class="line">        AFHTTPRequestOperation *op = [[AFHTTPRequestOperation alloc]initWithRequest:[<span class="built_in">NSURLRequest</span> requestWithURL:video]];</span><br><span class="line">        op.outputStream = [<span class="built_in">NSOutputStream</span> outputStreamToFileAtPath:file append:<span class="literal">NO</span>];</span><br><span class="line">        <span class="comment">// 根据下载量设置进度条的百分比</span></span><br><span class="line">        [op setDownloadProgressBlock:^(<span class="built_in">NSUInteger</span> bytesRead, <span class="keyword">long</span> <span class="keyword">long</span> totalBytesRead, <span class="keyword">long</span> <span class="keyword">long</span> totalBytesExpectedToRead) &#123;</span><br><span class="line">            <span class="built_in">CGFloat</span> precent = (<span class="built_in">CGFloat</span>)totalBytesRead / totalBytesExpectedToRead;</span><br><span class="line">            HUD.progress = precent;</span><br><span class="line">            HUD.labelText = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;%0.0f%%&quot;</span>,precent*<span class="number">100</span>];</span><br><span class="line">        &#125;];</span><br><span class="line">        [op setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, <span class="keyword">id</span> responseObject) &#123;</span><br><span class="line">            <span class="comment">//NSLog(@&quot;下载成功&quot;);</span></span><br><span class="line">            [responseObject writeToFile:file atomically:<span class="literal">YES</span>];</span><br><span class="line">            <span class="keyword">if</span> (!isOnlyDown) &#123;</span><br><span class="line">                 [weakSelf playVideoWithURL:[<span class="built_in">NSURL</span> fileURLWithPath:file]];</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (weakSelf.currentVideoFile &amp;&amp; weakSelf.currentVideoFile.length &gt;<span class="number">0</span>) &#123;</span><br><span class="line">                    [weakSelf.videoController reloadLocalVideo:[<span class="built_in">NSURL</span> fileURLWithPath:weakSelf.currentVideoFile]];</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            [HUD removeFromSuperview];</span><br><span class="line">        &#125; failure:^(AFHTTPRequestOperation *operation, <span class="built_in">NSError</span> *error) &#123;</span><br><span class="line">            <span class="comment">//NSLog(@&quot;下载失败&quot;);</span></span><br><span class="line">            HUD.labelText = [<span class="built_in">NSString</span> stringWithFormat:<span class="string">@&quot;下载失败&quot;</span>];</span><br><span class="line">            [HUD removeFromSuperview];</span><br><span class="line">            <span class="keyword">if</span> (!isOnlyDown) &#123;</span><br><span class="line">               [weakSelf dismissViewControllerAnimated:<span class="literal">NO</span> completion:<span class="literal">nil</span>];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;];</span><br><span class="line">        <span class="comment">//开始下载</span></span><br><span class="line">        [queue addOperation:op];</span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!isOnlyDown) &#123;</span><br><span class="line">             [<span class="keyword">self</span> playVideoWithURL:[<span class="built_in">NSURL</span> fileURLWithPath:file]];</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">             [<span class="keyword">self</span>.videoController reloadLocalVideo:[<span class="built_in">NSURL</span> fileURLWithPath:<span class="keyword">self</span>.currentVideoFile]];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="更多具体实现请下载工程实例"><a href="#更多具体实现请下载工程实例" class="headerlink" title="更多具体实现请下载工程实例"></a>更多具体实现请下载工程实例</h3><p><a target="_blank" rel="noopener" href="https://github.com/fangliquan/iOS-Technology-development">源码下载</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author: </strong>bomo
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link:</strong>
+    <a href="http://fangliquan.github.io/2016-07-24/wawa-mediaplayer/" title="iOS 轻量级播放器">http://fangliquan.github.io/2016-07-24/wawa-mediaplayer/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a>" rel="external nofollow" target="_blank">undefined</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/iOS%E8%A7%86%E9%A2%91%E6%92%AD%E6%94%BE%E5%99%A8/" rel="tag"># iOS视频播放器</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016-07-24/%E4%BD%BF%E7%94%A8Hexo-%E5%92%8Cgithub-pages-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="prev" title="使用Hexo和github pages搭建博客">
+      <i class="fa fa-chevron-left"></i> 使用Hexo和github pages搭建博客
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016-07-28/iOS-multithreading-NSThread-GCD/" rel="next" title="iOS开发--多线程 NSThread GCD 学习">
+      iOS开发--多线程 NSThread GCD 学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#WaWaVideoPlayer%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">WaWaVideoPlayer使用说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">使用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E8%A7%86%E9%A2%91%E6%A0%B8%E5%BF%83%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">下载视频核心方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E8%AF%B7%E4%B8%8B%E8%BD%BD%E5%B7%A5%E7%A8%8B%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">更多具体实现请下载工程实例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Author"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Author</p>
+  <div class="site-description" itemprop="description">iOS,Windows开发者</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zhengbomo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhengbomo" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhengbomo@hotmail.com" title="Email → mailto:zhengbomo@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>Email</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/intent/user?user_id=371531868" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;intent&#x2F;user?user_id&#x3D;371531868" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://facebook.com/zhengbomo" title="Facebook → http:&#x2F;&#x2F;facebook.com&#x2F;zhengbomo" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="tencent://message/?uin=449179249&Site=&Menu=yes" title="QQ → tencent:&#x2F;&#x2F;message&#x2F;?uin&#x3D;449179249&amp;Site&#x3D;&amp;Menu&#x3D;yes" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://weibo.com/1891587992" title="Weibo → http:&#x2F;&#x2F;weibo.com&#x2F;1891587992" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bomo</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

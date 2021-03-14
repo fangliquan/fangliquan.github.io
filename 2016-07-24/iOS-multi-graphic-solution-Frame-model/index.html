@@ -1,38 +1,523 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
-{% block title %} {{ page.title }} | {{ config.title }} {% endblock %}
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
-{% block page_class %}page-post-detail{% endblock %}
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangliquan.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="iOS开发中会遇到页面展示多图文的问题，尤其是新闻等图文混排，而且是图片不知道到宽高的情况。 此时就需要先异步下载图片然后根据得到的image通过 宽高比来更新对应ImageView的Frame。最后通过每个ImageView的Frame变化在重新更新多图文UI的Frame。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS开发--图文混排">
+<meta property="og:url" content="http://fangliquan.github.io/2016-07-24/iOS-multi-graphic-solution-Frame-model/index.html">
+<meta property="og:site_name" content="microleo的个人博客">
+<meta property="og:description" content="iOS开发中会遇到页面展示多图文的问题，尤其是新闻等图文混排，而且是图片不知道到宽高的情况。 此时就需要先异步下载图片然后根据得到的image通过 宽高比来更新对应ImageView的Frame。最后通过每个ImageView的Frame变化在重新更新多图文UI的Frame。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-07-24T05:26:17.000Z">
+<meta property="article:modified_time" content="2017-03-20T10:28:58.000Z">
+<meta property="article:author" content="microleo">
+<meta property="article:tag" content="iOS多图文">
+<meta property="article:tag" content="图文混排">
+<meta property="article:tag" content="Frame模型">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://fangliquan.github.io/2016-07-24/iOS-multi-graphic-solution-Frame-model/">
 
 
-{% block content %}
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+  <title>iOS开发--图文混排 | microleo的个人博客</title>
+  
 
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<link rel="alternate" href="/atom.xml" title="microleo的个人博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
-{% endblock %}
+  <div class="site-meta">
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">microleo的个人博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">工作学习中的学习笔记及技术积累</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
 
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">20</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories<span class="badge">5</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">15</span></a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-exclamation-circle fa-fw"></i>About</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://fangliquan.github.io/2016-07-24/iOS-multi-graphic-solution-Frame-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Author">
+      <meta itemprop="description" content="iOS,Windows开发者">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="microleo的个人博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          iOS开发--图文混排
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Post created:2016-07-24 13:26:17" itemprop="dateCreated datePublished" datetime="2016-07-24T13:26:17+08:00">2016-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Post modified:2017-03-20 18:28:58" itemprop="dateModified" datetime="2017-03-20T18:28:58+08:00">2017-03-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS-Project-Practice/" itemprop="url" rel="index"><span itemprop="name">iOS Project Practice</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>iOS开发中会遇到页面展示多图文的问题，尤其是新闻等图文混排，而且是图片不知道到宽高的情况。</p>
+<p>此时就需要先异步下载图片然后根据得到的image通过 <code>宽高比</code>来更新对应ImageView的Frame。最后通过每个ImageView的Frame变化在重新更新多图文UI的Frame。</p>
+<span id="more"></span>
+
+<h3 id="根据页面设计得出页面的Frame模型"><a href="#根据页面设计得出页面的Frame模型" class="headerlink" title="根据页面设计得出页面的Frame模型"></a>根据页面设计得出页面的Frame模型</h3><p>   例：</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span> ,<span class="keyword">assign</span> ,<span class="keyword">readonly</span>) <span class="built_in">CGRect</span> noticeTitleF;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span> ,<span class="keyword">assign</span> ,<span class="keyword">readonly</span>) <span class="built_in">CGRect</span> noticeTimeF;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span> ,<span class="keyword">assign</span> ,<span class="keyword">readonly</span>) <span class="built_in">CGRect</span> noticeSenderF;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span> ,<span class="keyword">assign</span> ,<span class="keyword">readonly</span>) <span class="built_in">CGRect</span> noticecontentF;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span> ,<span class="keyword">strong</span> ,<span class="keyword">readonly</span>) <span class="built_in">NSArray</span> *noticeImagesF;</span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span> ,<span class="keyword">strong</span> ,<span class="keyword">readonly</span>) <span class="built_in">NSArray</span> *noticeImagesDespF;</span><br></pre></td></tr></table></figure>
+<h3 id="给通过Frame模型中setModel方法来计算对应的Rect值"><a href="#给通过Frame模型中setModel方法来计算对应的Rect值" class="headerlink" title="给通过Frame模型中setModel方法来计算对应的Rect值"></a>给通过Frame模型中setModel方法来计算对应的Rect值</h3><ul>
+<li>项目中的图文和标题内容是分开的 以AttachModel集合的方式返回过来，先假设集合中的每一项都有image和对应的描述来计算对应的Attach的ViewModelFrame，<br>例：<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">HedoneAttachDTO *pictureTopicPost = hedoneClassWeeklyTaskResponse.attachs[i];</span><br><span class="line">ViewFrameModel *imageRect = [[ViewFrameModel alloc]init];</span><br><span class="line">imageRect.x = rightAndLeftMargin;</span><br><span class="line">imageRect.y = offsetY + upImageDespH;</span><br><span class="line">imageRect.width = contentWidth;</span><br><span class="line">imageRect.height = <span class="number">300</span>;</span><br><span class="line">[imagesF addObject:imageRect];  </span><br><span class="line"><span class="built_in">CGFloat</span> imageDespH = [BabyScheduleTaskHeaderFrame textFrameWithString:pictureTopicPost.desp width:contentWidth fontSize:WAWA_TEXTFONT_FLOAT_TITLE].height + <span class="number">2</span>;</span><br><span class="line">ViewFrameModel *imageDespRect = [[ViewFrameModel alloc]init];</span><br><span class="line">imageDespRect.x = rightAndLeftMargin;</span><br><span class="line">imageDespRect.y = offsetY + upImageDespH + <span class="number">300</span>;</span><br><span class="line">imageDespRect.width = contentWidth;</span><br><span class="line">imageDespRect.height = imageDespH;</span><br><span class="line">[imagesDespF addObject:imageDespRect];</span><br><span class="line">upImageDespH += (imageDespH +topAndBottomMargin + <span class="number">300</span>);</span><br></pre></td></tr></table></figure></li>
+<li>根据集合下载对应的Image并更新Frame<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span> ; i &lt;attachs.count; i++) &#123;</span><br><span class="line">    HedoneAttachDTO *pictureTopicPost = hedoneClassWeeklyTaskResponse.attachs[i];</span><br><span class="line">    [<span class="keyword">self</span> getClassWeeklyTaskAttachPictureFrame:pictureTopicPost andIndex:i completion:^(<span class="built_in">NSInteger</span> index, <span class="built_in">CGFloat</span> imageH)&#123;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">NSMutableArray</span> *imagesOldF = [<span class="built_in">NSMutableArray</span> arrayWithArray:_noticeImagesF];</span><br><span class="line">        <span class="built_in">NSMutableArray</span> *imagesDespOldF = [<span class="built_in">NSMutableArray</span> arrayWithArray:_noticeImagesDespF];</span><br><span class="line">        <span class="comment">//更新imageHeight</span></span><br><span class="line">        ViewFrameModel *pictureF = imagesOldF [index];</span><br><span class="line">        pictureF.height = imageH;</span><br><span class="line">        [imagesOldF replaceObjectAtIndex:index withObject:pictureF];</span><br><span class="line">        ViewFrameModel *oldpictureFM = [imagesOldF firstObject];</span><br><span class="line">        <span class="built_in">CGRect</span> oldpictureR = <span class="built_in">CGRectMake</span>(oldpictureFM.x, oldpictureFM.y, oldpictureFM.width, oldpictureFM.height);</span><br><span class="line"></span><br><span class="line">        ViewFrameModel *oldpictureDespFM = [imagesDespOldF firstObject];</span><br><span class="line">        oldpictureDespFM.y = <span class="built_in">CGRectGetMaxY</span>(oldpictureR) + topAndBottomMargin;</span><br><span class="line">        [imagesDespOldF replaceObjectAtIndex:<span class="number">0</span> withObject:oldpictureDespFM];</span><br><span class="line"></span><br><span class="line">        <span class="built_in">CGFloat</span> oldOffsetY = offsetY + oldpictureFM.height + topAndBottomMargin + oldpictureDespFM.height + topAndBottomMargin;</span><br><span class="line">        <span class="comment">//遍历集合 重新赋值frame</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> m = <span class="number">1</span>; m &lt;imagesOldF.count; m++) &#123;</span><br><span class="line">            oldOffsetY = oldOffsetY;</span><br><span class="line">            ViewFrameModel *uppictureF = imagesOldF [m];</span><br><span class="line">            uppictureF.y = oldOffsetY;</span><br><span class="line">            [imagesOldF replaceObjectAtIndex:m withObject:uppictureF];</span><br><span class="line">            oldOffsetY = oldOffsetY + uppictureF.height + topAndBottomMargin;</span><br><span class="line">            ViewFrameModel *uppictureDespF = imagesDespOldF [m];</span><br><span class="line">            uppictureDespF.y = oldOffsetY;</span><br><span class="line">            [imagesDespOldF replaceObjectAtIndex:m withObject:uppictureDespF];</span><br><span class="line">            oldOffsetY = oldOffsetY + uppictureDespF.height + topAndBottomMargin;</span><br><span class="line">        &#125;</span><br><span class="line">        _noticeFooterF = <span class="built_in">CGRectMake</span>(<span class="number">0</span>, oldOffsetY + topAndBottomMargin*<span class="number">4</span>, Main_Screen_Width, <span class="number">1</span>);</span><br><span class="line">        _noticeHeaderHeight = <span class="built_in">CGRectGetMaxY</span>(_noticeFooterF);</span><br><span class="line">        _noticeImagesF = imagesOldF;</span><br><span class="line">        _noticeImagesDespF = imagesDespOldF;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">self</span>.reloadNoticeHeaderFrameBlock) &#123;</span><br><span class="line">          <span class="comment">//更新页面Frame回调Block</span></span><br><span class="line">            <span class="keyword">self</span>.reloadNoticeHeaderFrameBlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<h3 id="根据设计编写多图文的UIView代码"><a href="#根据设计编写多图文的UIView代码" class="headerlink" title="根据设计编写多图文的UIView代码"></a>根据设计编写多图文的UIView代码</h3><p>   有多图文对象的个数来绘制页面并保存到数组中<br>   <figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">_imageArray = [<span class="built_in">NSMutableArray</span> arrayWithCapacity:_momentPicturesCount];</span><br><span class="line">_imageDespArray = [<span class="built_in">NSMutableArray</span> arrayWithCapacity:_momentPicturesCount];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i&lt; _momentPicturesCount;i++) &#123;</span><br><span class="line">    <span class="built_in">UIImageView</span> *picView = [[<span class="built_in">UIImageView</span> alloc]init];</span><br><span class="line">    picView.tag = i;</span><br><span class="line">    picView.image = [<span class="built_in">UIImage</span> imageNamed: (<span class="string">@&quot;childshow_placeholder&quot;</span>)];</span><br><span class="line">    picView.userInteractionEnabled = <span class="literal">YES</span>;</span><br><span class="line">    [picView addGestureRecognizer:[[<span class="built_in">UITapGestureRecognizer</span> alloc]initWithTarget:<span class="keyword">self</span> action:<span class="keyword">@selector</span>(showPicture:)]];</span><br><span class="line">    [_imageArray addObject:picView];</span><br><span class="line">    [<span class="keyword">self</span> addSubview:picView];</span><br><span class="line"></span><br><span class="line">    AutoLinkLabel *imageDespLabel = [[AutoLinkLabel alloc]init];</span><br><span class="line">    imageDespLabel.font = [<span class="built_in">UIFont</span> systemFontOfSize:WAWA_TEXTFONT_FLOAT_CONTENT_BIG];</span><br><span class="line">    imageDespLabel.textColor = WAWA_TEXTCOLOR_DARKGRAY;</span><br><span class="line">    imageDespLabel.aDelegate = <span class="keyword">self</span>;</span><br><span class="line">    imageDespLabel.numberOfLines = <span class="number">0</span>;</span><br><span class="line">    [_imageDespArray addObject:imageDespLabel];</span><br><span class="line">    [<span class="keyword">self</span> addSubview:imageDespLabel];</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="在UIView的setModel中给页面控件赋值Frame和Content"><a href="#在UIView的setModel中给页面控件赋值Frame和Content" class="headerlink" title="在UIView的setModel中给页面控件赋值Frame和Content"></a>在UIView的setModel中给页面控件赋值Frame和Content</h3><p> 由计算好的Frame在重新给已保存好的多图文集合赋值并替换</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span> ; i &lt; babyScheduleTaskHeaderFrame.hedoneClassWeeklyTaskResponse.attachs.count; i++) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">UIImageView</span> *imageView = <span class="keyword">self</span>.imageArray[i];</span><br><span class="line">    ViewFrameModel *frameModel = babyScheduleTaskHeaderFrame.noticeImagesF[i];</span><br><span class="line">    imageView.frame = <span class="built_in">CGRectMake</span>(frameModel.x, frameModel.y, frameModel.width, frameModel.height);</span><br><span class="line">    <span class="comment">//NSLog(@&quot;image%ld, offsetY:%ld,height :%ld&quot;,i,frameModel.y,frameModel.height);</span></span><br><span class="line"></span><br><span class="line">    AutoLinkLabel *imageDespL = <span class="keyword">self</span>.imageDespArray[i];</span><br><span class="line">    ViewFrameModel *despframeModel = babyScheduleTaskHeaderFrame.noticeImagesDespF[i];</span><br><span class="line">    imageDespL.frame = <span class="built_in">CGRectMake</span>(despframeModel.x, despframeModel.y, despframeModel.width, despframeModel.height);</span><br><span class="line">    <span class="comment">//NSLog(@&quot;imageDesp%ld, offsetY:%ld,height :%ld&quot;,i,despframeModel.y,despframeModel.height);</span></span><br><span class="line"></span><br><span class="line">    HedoneAttachDTO *pictureTopicPost = babyScheduleTaskHeaderFrame.hedoneClassWeeklyTaskResponse.attachs[i];</span><br><span class="line">    [imageView setImageWithURLStr:pictureTopicPost.addr placeholder:[<span class="built_in">UIImage</span> imageNamed:<span class="string">@&quot;childshow_placeholder&quot;</span>]];</span><br><span class="line">    imageDespL.autoLinkText = pictureTopicPost.desp?pictureTopicPost.desp:<span class="string">@&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">    [<span class="keyword">self</span>.imageArray replaceObjectAtIndex:i withObject:imageView];</span><br><span class="line">    [<span class="keyword">self</span>.imageDespArray replaceObjectAtIndex:i withObject:imageDespL];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="将UIView赋值给TableViewHeader"><a href="#将UIView赋值给TableViewHeader" class="headerlink" title="将UIView赋值给TableViewHeader"></a>将UIView赋值给TableViewHeader</h3><p>定义多图文frameModel对象并设置detailModel</p>
+<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">BabyScheduleTaskHeaderFrame *detailHeaderFrame = [[BabyScheduleTaskHeaderFrame alloc]init];</span><br><span class="line">detailHeaderFrame.hedoneClassWeeklyTaskResponse = model;</span><br><span class="line">__<span class="keyword">unsafe_unretained</span> <span class="keyword">typeof</span>(<span class="keyword">self</span>) selfVc = <span class="keyword">self</span>;</span><br><span class="line">detailHeaderFrame.reloadNoticeHeaderFrameBlock = ^()&#123;</span><br><span class="line">  <span class="comment">//回调更新Frame</span></span><br><span class="line">    selfVc.babyScheduleTaskHeaderView.babyScheduleTaskHeaderFrame = selfVc.babyScheduleTaskHeaderFrame;</span><br><span class="line">    <span class="built_in">CGRect</span> oldHeaderF = selfVc.babyScheduleTaskHeaderView.frame;</span><br><span class="line">    oldHeaderF.size.height = selfVc.babyScheduleTaskHeaderFrame.noticeHeaderHeight;</span><br><span class="line">    selfVc.babyScheduleTaskHeaderView.frame = oldHeaderF;</span><br><span class="line">    selfVc.tableView.tableHeaderView = selfVc.babyScheduleTaskHeaderView;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">self</span>.babyScheduleTaskHeaderFrame = detailHeaderFrame;</span><br><span class="line">BabyScheduleTaskHeaderView *detailHeaderView = [[BabyScheduleTaskHeaderView alloc]initWithFrame:<span class="built_in">CGRectMake</span>(<span class="number">0</span>, <span class="number">0</span>, Main_Screen_Width, detailHeaderFrame.noticeHeaderHeight) andMomentPicturesCount:(<span class="keyword">int</span>)model.attachs.count];</span><br><span class="line">detailHeaderView.babyScheduleTaskHeaderFrame = detailHeaderFrame;</span><br><span class="line"><span class="keyword">self</span>.babyScheduleTaskHeaderView = detailHeaderView;</span><br><span class="line"></span><br><span class="line"><span class="keyword">self</span>.tableView.tableHeaderView = <span class="keyword">self</span>.babyScheduleTaskHeaderView;</span><br></pre></td></tr></table></figure>
+
+<h3 id="更多具体实现请下载源码"><a href="#更多具体实现请下载源码" class="headerlink" title="更多具体实现请下载源码"></a>更多具体实现请下载源码</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/fangliquan/iOS-Technology-development">下载源码</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author: </strong>bomo
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link:</strong>
+    <a href="http://fangliquan.github.io/2016-07-24/iOS-multi-graphic-solution-Frame-model/" title="iOS开发--图文混排">http://fangliquan.github.io/2016-07-24/iOS-multi-graphic-solution-Frame-model/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a>" rel="external nofollow" target="_blank">undefined</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/iOS%E5%A4%9A%E5%9B%BE%E6%96%87/" rel="tag"># iOS多图文</a>
+              <a href="/tags/%E5%9B%BE%E6%96%87%E6%B7%B7%E6%8E%92/" rel="tag"># 图文混排</a>
+              <a href="/tags/Frame%E6%A8%A1%E5%9E%8B/" rel="tag"># Frame模型</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016-07-23/iOS9-new-feature-generic/" rel="prev" title="iO9新特性学习--泛型">
+      <i class="fa fa-chevron-left"></i> iO9新特性学习--泛型
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016-07-24/%E4%BD%BF%E7%94%A8Hexo-%E5%92%8Cgithub-pages-%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="next" title="使用Hexo和github pages搭建博客">
+      使用Hexo和github pages搭建博客 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E9%A1%B5%E9%9D%A2%E8%AE%BE%E8%AE%A1%E5%BE%97%E5%87%BA%E9%A1%B5%E9%9D%A2%E7%9A%84Frame%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">根据页面设计得出页面的Frame模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%99%E9%80%9A%E8%BF%87Frame%E6%A8%A1%E5%9E%8B%E4%B8%ADsetModel%E6%96%B9%E6%B3%95%E6%9D%A5%E8%AE%A1%E7%AE%97%E5%AF%B9%E5%BA%94%E7%9A%84Rect%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">给通过Frame模型中setModel方法来计算对应的Rect值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E8%AE%BE%E8%AE%A1%E7%BC%96%E5%86%99%E5%A4%9A%E5%9B%BE%E6%96%87%E7%9A%84UIView%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">根据设计编写多图文的UIView代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8UIView%E7%9A%84setModel%E4%B8%AD%E7%BB%99%E9%A1%B5%E9%9D%A2%E6%8E%A7%E4%BB%B6%E8%B5%8B%E5%80%BCFrame%E5%92%8CContent"><span class="nav-number">4.</span> <span class="nav-text">在UIView的setModel中给页面控件赋值Frame和Content</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86UIView%E8%B5%8B%E5%80%BC%E7%BB%99TableViewHeader"><span class="nav-number">5.</span> <span class="nav-text">将UIView赋值给TableViewHeader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0%E8%AF%B7%E4%B8%8B%E8%BD%BD%E6%BA%90%E7%A0%81"><span class="nav-number">6.</span> <span class="nav-text">更多具体实现请下载源码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Author"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Author</p>
+  <div class="site-description" itemprop="description">iOS,Windows开发者</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zhengbomo" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhengbomo" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhengbomo@hotmail.com" title="Email → mailto:zhengbomo@hotmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>Email</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/intent/user?user_id=371531868" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;intent&#x2F;user?user_id&#x3D;371531868" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://facebook.com/zhengbomo" title="Facebook → http:&#x2F;&#x2F;facebook.com&#x2F;zhengbomo" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>Facebook</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="tencent://message/?uin=449179249&Site=&Menu=yes" title="QQ → tencent:&#x2F;&#x2F;message&#x2F;?uin&#x3D;449179249&amp;Site&#x3D;&amp;Menu&#x3D;yes" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://weibo.com/1891587992" title="Weibo → http:&#x2F;&#x2F;weibo.com&#x2F;1891587992" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">bomo</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

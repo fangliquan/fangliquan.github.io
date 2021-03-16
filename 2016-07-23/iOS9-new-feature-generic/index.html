@@ -23,13 +23,13 @@
 
   <meta name="description" content="泛型：限制类型使用场景 在集合（数组，字典，NSSet)中使用泛型比较常见 当声明一个类，类里面的某些书写的类型不确定，这时候我们才使用泛型。z">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iO9新特性学习--泛型">
+<meta property="og:title" content="iOS新特性学习--泛型">
 <meta property="og:url" content="http://fangliquan.github.io/2016-07-23/iOS9-new-feature-generic/index.html">
 <meta property="og:site_name" content="microleo的个人博客">
 <meta property="og:description" content="泛型：限制类型使用场景 在集合（数组，字典，NSSet)中使用泛型比较常见 当声明一个类，类里面的某些书写的类型不确定，这时候我们才使用泛型。z">
 <meta property="og:locale">
 <meta property="article:published_time" content="2016-07-23T09:06:11.000Z">
-<meta property="article:modified_time" content="2017-03-20T10:28:58.000Z">
+<meta property="article:modified_time" content="2021-03-14T07:55:26.990Z">
 <meta property="article:author" content="microleo">
 <meta property="article:tag" content="runtime">
 <meta property="article:tag" content="iOS9新特性">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>iO9新特性学习--泛型 | microleo的个人博客</title>
+  <title>iOS新特性学习--泛型 | microleo的个人博客</title>
   
 
 
@@ -89,7 +89,7 @@
     <header class="header" itemscope itemtype="http://schema.org/WPHeader">
       <div class="header-inner"><div class="site-brand-container">
   <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar">
+    <div class="toggle" aria-label="تشغيل شريط التصفح">
       <span class="toggle-line toggle-line-first"></span>
       <span class="toggle-line toggle-line-middle"></span>
       <span class="toggle-line toggle-line-last"></span>
@@ -135,7 +135,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">15</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives<span class="badge">16</span></a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -211,7 +211,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          iO9新特性学习--泛型
+          iOS新特性学习--泛型
         </h1>
 
         <div class="post-meta">
@@ -227,8 +227,8 @@
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Post modified:2017-03-20 18:28:58" itemprop="dateModified" datetime="2017-03-20T18:28:58+08:00">2017-03-20</time>
+                <span class="post-meta-item-text">عُدل في</span>
+                <time title="Post modified:2021-03-14 15:55:26" itemprop="dateModified" datetime="2021-03-14T15:55:26+08:00">2021-03-14</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -258,24 +258,24 @@
 </li>
 </ol>
 <h2 id="书写规范"><a href="#书写规范" class="headerlink" title="书写规范"></a>书写规范</h2><ol>
-<li>在类型后面定义泛型，<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="built_in">NSMutableArray</span>&lt;<span class="built_in">UIImage</span> *&gt; *mutableArray</span><br></pre></td></tr></table></figure>
+<li>在类型后面定义泛型，<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSMutableArray</span>&lt;<span class="built_in">UIImage</span> *&gt; *mutableArray</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
 <h2 id="修饰："><a href="#修饰：" class="headerlink" title="修饰："></a>修饰：</h2><p>只能修饰方法的调用</p>
 <h2 id="好处："><a href="#好处：" class="headerlink" title="好处："></a>好处：</h2><ol>
 <li>提高规范，减少交流</li>
-<li>通过集合取出来对象，直接当做泛型对象使用，可以直接使用点语法<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="keyword">self</span>.mutableArray[<span class="number">0</span>].temp;</span><br></pre></td></tr></table></figure>
+<li>通过集合取出来对象，直接当做泛型对象使用，可以直接使用点语法<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">self</span>.mutableArray[<span class="number">0</span>].temp;</span><br></pre></td></tr></table></figure>
 
 </li>
 </ol>
 <h2 id="子类想给父类赋值使用协变"><a href="#子类想给父类赋值使用协变" class="headerlink" title="子类想给父类赋值使用协变"></a>子类想给父类赋值使用协变</h2><p><code>__covariant</code>(协变）:用于数据强转类型，可以向上强转，子类，可以转成 父类，例:</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span>&lt;<span class="title">__covariant</span> <span class="title">ObjectType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span>&lt;<span class="title">__covariant</span> <span class="title">ObjectType</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="父类强转成子类-逆变"><a href="#父类强转成子类-逆变" class="headerlink" title="父类强转成子类 逆变"></a>父类强转成子类 逆变</h2><p><code>__contravariant</code>（逆变）：用于泛型数据强转类型，可以向下强转，父类可以转成子类 例:</p>
-<figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span>&lt;<span class="title">__contravariant</span> <span class="title">ObjectType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span>&lt;<span class="title">__contravariant</span> <span class="title">ObjectType</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="定义泛型类"><a href="#定义泛型类" class="headerlink" title="定义泛型类"></a>定义泛型类</h2><figure class="highlight objc"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span>&lt;<span class="title">__covariant</span> <span class="title">ObjectType</span>&gt; : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>) ObjectType language;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+<h2 id="定义泛型类"><a href="#定义泛型类" class="headerlink" title="定义泛型类"></a>定义泛型类</h2><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span>&lt;<span class="title">__covariant</span> <span class="title">ObjectType</span>&gt; : <span class="title">NSObject</span></span></span><br><span class="line"><span class="keyword">@property</span>(<span class="keyword">nonatomic</span>) ObjectType language;</span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -291,7 +291,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link:</strong>
-    <a href="http://fangliquan.github.io/2016-07-23/iOS9-new-feature-generic/" title="iO9新特性学习--泛型">http://fangliquan.github.io/2016-07-23/iOS9-new-feature-generic/</a>
+    <a href="http://fangliquan.github.io/2016-07-23/iOS9-new-feature-generic/" title="iOS新特性学习--泛型">http://fangliquan.github.io/2016-07-23/iOS9-new-feature-generic/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a>" rel="external nofollow" target="_blank">undefined</a> unless stating additionally.
@@ -393,7 +393,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

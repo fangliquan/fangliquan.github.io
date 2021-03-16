@@ -23,7 +23,7 @@
 
   <meta name="description" content="iOS一、内存管理1.谈谈对内存管理的理解MRC (手动引用计数) 和ARC (自动引用计数)  MRC 核心思想：引用计数式内存管理  四个法则  自己生成的对象自己持有 (使用 alloc&#x2F;new&#x2F;copy&#x2F;mutableCopy 开头的方法生成对象后持有对象)  非自己生成的对象自己也能持有 (retain) 123id obj &#x3D; [NSArray array]; &#x2F;&amp;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="iOSiOS面试整理(一)">
+<meta property="og:title" content="iOS面试整理(一)">
 <meta property="og:url" content="http://fangliquan.github.io/2021-03-14/iOS%E9%9D%A2%E8%AF%95%E6%95%B4%E7%90%86(%E4%B8%80)/index.html">
 <meta property="og:site_name" content="microleo的个人博客">
 <meta property="og:description" content="iOS一、内存管理1.谈谈对内存管理的理解MRC (手动引用计数) 和ARC (自动引用计数)  MRC 核心思想：引用计数式内存管理  四个法则  自己生成的对象自己持有 (使用 alloc&#x2F;new&#x2F;copy&#x2F;mutableCopy 开头的方法生成对象后持有对象)  非自己生成的对象自己也能持有 (retain) 123id obj &#x3D; [NSArray array]; &#x2F;&amp;">
@@ -33,8 +33,9 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1641067-8d52ca990ffbee0a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1641067-5ed8bf6c24244b4c.png?imageMogr2/auto-orient/strip%7CimageView2/2">
 <meta property="article:published_time" content="2021-03-14T07:53:58.000Z">
-<meta property="article:modified_time" content="2021-03-16T03:21:38.142Z">
+<meta property="article:modified_time" content="2021-03-16T03:24:54.576Z">
 <meta property="article:author" content="microleo">
+<meta property="article:tag" content="iOS面试">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://img.blog.csdn.net/20130614155652265">
 
@@ -51,7 +52,7 @@
   };
 </script>
 
-  <title>iOSiOS面试整理(一) | microleo的个人博客</title>
+  <title>iOS面试整理(一) | microleo的个人博客</title>
   
 
 
@@ -128,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">20</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags<span class="badge">21</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -214,7 +215,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          iOSiOS面试整理(一)
+          iOS面试整理(一)
         </h1>
 
         <div class="post-meta">
@@ -231,8 +232,17 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">عُدل في</span>
-                <time title="Post modified:2021-03-16 11:21:38" itemprop="dateModified" datetime="2021-03-16T11:21:38+08:00">2021-03-16</time>
+                <time title="Post modified:2021-03-16 11:24:54" itemprop="dateModified" datetime="2021-03-16T11:24:54+08:00">2021-03-16</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+            </span>
 
           
 
@@ -1091,7 +1101,7 @@ for (int i = 0; i &lt; 100; i++) &#123;
   </li>
   <li class="post-copyright-link">
     <strong>Post link:</strong>
-    <a href="http://fangliquan.github.io/2021-03-14/iOS%E9%9D%A2%E8%AF%95%E6%95%B4%E7%90%86(%E4%B8%80)/" title="iOSiOS面试整理(一)">http://fangliquan.github.io/2021-03-14/iOS面试整理(一)/</a>
+    <a href="http://fangliquan.github.io/2021-03-14/iOS%E9%9D%A2%E8%AF%95%E6%95%B4%E7%90%86(%E4%B8%80)/" title="iOS面试整理(一)">http://fangliquan.github.io/2021-03-14/iOS面试整理(一)/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a>" rel="external nofollow" target="_blank">undefined</a> unless stating additionally.
@@ -1101,6 +1111,9 @@ for (int i = 0; i &lt; 100; i++) &#123;
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/iOS%E9%9D%A2%E8%AF%95/" rel="tag"># iOS面试</a>
+          </div>
 
         
 
@@ -1199,7 +1212,7 @@ for (int i = 0; i &lt; 100; i++) &#123;
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
